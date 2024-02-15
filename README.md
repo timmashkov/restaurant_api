@@ -1,4 +1,4 @@
-# YLAB-food_app
+# Food_app
 
 [![python](https://img.shields.io/badge/python-3.10_-blue?style=flat-square)](https://www.python.org/)
 [![fastapi](https://img.shields.io/badge/fastapi-0.109.0-critical?style=flat-square)](https://fastapi.tiangolo.com/)
