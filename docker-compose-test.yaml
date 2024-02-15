@@ -1,0 +1,46 @@
+version: "3.7"
+services:
+  test_db:
+    image: postgres:15.1-alpine
+    container_name: test_db
+    command: postgres -p 5322
+    expose:
+      - 5322
+    env_file:
+      - .env_prod_test
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -p 5322" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: always
+
+  redis_ylab_test:
+    image: redis:latest
+    container_name: redis_ylab_test
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env_prod
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  ylab_task_test:
+    build:
+      context: .
+      dockerfile: Dockerfile-test
+    env_file:
+      - .env_prod_test
+    container_name: ylab_task_test
+    command: sh -c "chmod +x /food_app/docker/tests.sh && /food_app/docker/tests.sh"
+    ports:
+      - "1666:8000"
+    depends_on:
+      test_db:
+        condition: service_healthy
+      redis_ylab_test:
+        condition: service_healthy
